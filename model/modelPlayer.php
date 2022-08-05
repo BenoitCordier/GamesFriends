@@ -1,11 +1,12 @@
 <?php
+
 // Model Player qui gérera tout ce qui se rapporte aux utilisateurs
 class Player
 {
     private $_id;
     private $_playerName;
     private $_password;
-    private $_eMail;
+    private $_email;
     private $_playerLocation;
     private $_status;
 
@@ -13,7 +14,7 @@ class Player
 
     public function __construct($datas)
     {
-        $this->hydrate($datas);
+        $this->hydrate([$datas]);
     }
 
     // Getters
@@ -33,16 +34,16 @@ class Player
         return $this->_password;
     }
 
-    public function eMail()
+    public function email()
     {
-        return $this->_eMail;
+        return $this->_email;
     }
 
     public function playerLocation()
     {
         return $this->_playerLocation;
     }
-    
+
     public function status()
     {
         return $this->_status;
@@ -65,9 +66,9 @@ class Player
         $this->_password = $password;
     }
 
-    public function setEmail($eMail)
+    public function setEmail($email)
     {
-        $this->_eMail = $eMail;
+        $this->_email = $email;
     }
 
     public function setPlayerLocation($playerLocation)
@@ -96,8 +97,8 @@ class Player
             $this->setPassword($data['password']);
         }
 
-        if (isset($data['eMail'])) {
-            $this->setEmail($data['eMail']);
+        if (isset($data['email'])) {
+            $this->setEmail($data['email']);
         }
 
         if (isset($data['playerLocation'])) {
@@ -126,13 +127,13 @@ class PlayerManager
 
     // Method
     // Enregistrement d'un nouvel utilisateur
-    public function signIn($playerName, $passHash, $eMail, $playerLocation, $games)
+    public function signIn($playerName, $passHash, $email)
     {
-        $sql = "INSERT INTO player(playerName, eMail, password, playerLocation, games, status) VALUES(:playerName, :eMail, :passHash, :playerLocation, :games, 'player')";
+        $sql = "INSERT INTO player(playerName, email, password, playerLocation, games, status) VALUES(:playerName, :email, :passHash, :playerLocation, :games, 'player')";
         $stmt = $this->_db->prepare($sql);
         $stmt->bindParam(':playerName', $playerName);
         $stmt->bindParam(':passHash', $passHash);
-        $stmt->bindParam(':eMail', $eMail);
+        $stmt->bindParam(':email', $email);
         $stmt->bindParam(':playerLocation', $playerLocation);
         $stmt->bindParam(':games', $games);
         $result = $stmt->execute();
@@ -147,56 +148,66 @@ class PlayerManager
         $stmt = $this->_db->prepare($sql);
         $stmt->execute([$playerName]);
         $result = $stmt->fetch();
-        $player = new Player($result);
+        $player = $result;
 
         return $player;
     }
     // Modification de mot de passe
-    public function modifyPassword($id, $newPassHash)
+    public function modifyPassword($playerName, $newPassHash)
     {
-        $sql = 'UPDATE player SET password = :newPassHash WHERE id = :id';
+        $sql = 'UPDATE player SET password = :newPassHash WHERE playerName = :playerName';
         $stmt = $this->_db->prepare($sql);
-        $stmt->execute(["id" => $id, "password" => $newPassHash]);
+        $stmt->execute(["playerName" => $playerName, "password" => $newPassHash]);
         $updatedPassword = $stmt;
 
         return $updatedPassword;
     }
-    // Modification de localisation
-    public function modifyPlayerLocation($id, $newPlayerLocation)
+    // Modification d'email
+    public function modifyEmail($playerName, $newEmail)
     {
-        $sql = 'UPDATE player SET playerLocation = :newPlayerLocation WHERE id = :id';
+        $sql = 'UPDATE player SET email = :newEmail WHERE playerName = :playerName';
         $stmt = $this->_db->prepare($sql);
-        $stmt->execute(["id" => $id, "playerLocation" => $newPlayerLocation]);
+        $stmt->execute(["playerName" => $playerName, "email" => $newEmail]);
+        $updatedEmail = $stmt;
+
+        return $updatedEmail;
+    }
+    // Modification de localisation
+    public function modifyPlayerLocation($playerName, $newPlayerLocation)
+    {
+        $sql = 'UPDATE player SET playerLocation = :newPlayerLocation WHERE playerName = :playerName';
+        $stmt = $this->_db->prepare($sql);
+        $stmt->execute(["playerName" => $playerName, "playerLocation" => $newPlayerLocation]);
         $updatedLocation = $stmt;
 
         return $updatedLocation;
     }
     // Modifiction des jeux
-    public function modifyGames($id, $newGames)
+    public function modifyGames($playerName, $newGames)
     {
-        $sql = 'UPDATE player SET games = :games WHERE id = :id';
+        $sql = 'UPDATE player SET games = :games WHERE playerName = :playerName';
         $stmt = $this->_db->prepare($sql);
-        $stmt->execute(["id" => $id, "games" => $newGames ]);
+        $stmt->execute(["playerName" => $playerName, "games" => $newGames ]);
         $updatedGames = $stmt;
 
         return $updatedGames;
     }
     // Modification du type d'utilisateur
-    public function selectStatus($id, $newStatus)
+    public function selectStatus($playerName, $newStatus)
     {
-        $sql = 'UPDATE player SET status = :newStatus WHERE id = :id';
+        $sql = 'UPDATE player SET status = :newStatus WHERE playerName = :playerName';
         $stmt = $this->_db->prepare($sql);
-        $stmt->execute(["id" => $id, "status" => $newStatus]);
+        $stmt->execute(["playerName" => $playerName, "status" => $newStatus]);
         $updatesStatus = $stmt;
 
         return $updatesStatus;
     }
     // Suppression d'un utilisateur
-    public function deletePlayer($id)
+    public function deletePlayer($playerName)
     {
-        $sql = 'DELETE FROM player WHERE id = ?';
+        $sql = 'DELETE FROM player WHERE playerName = ?';
         $stmt = $this->_db->prepare($sql);
-        $stmt->execute([$id]);
+        $stmt->execute([$playerName]);
         $deletedPlayer = $stmt;
 
         return $deletedPlayer;

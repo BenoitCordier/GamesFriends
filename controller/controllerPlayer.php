@@ -4,24 +4,31 @@ require_once 'model/modelDb.php';
 require_once 'model/modelPlayer.php';
 
 $db = dbConnection();
+
 // Identification
 function logIn()
 {
     global $db;
-
     $playerManager = new PlayerManager($db); // On charge le model PlayerManager
+
     $playerName = !empty($_POST['playerName']) ? $_POST['playerName'] : null; // On vérifie l'existence de $playerName
     $password = !empty($_POST['password']) ? $_POST['password'] : null; // On vérifie l'existence de $password
-    $getInfo = $playerManager->getInfo($playerName); // On récupère les informations liées à $playerName
+    $getPlayerInfo = $playerManager->getPlayerInfo($playerName); // On récupère les informations liées à $playerName
 
-    if ($getInfo) {
-        $isPasswordCorrect = password_verify($_POST['password'], $getInfo['password']); // Vérification du mot de passe
+    if ($getPlayerInfo) {
+        $isPasswordCorrect = password_verify($_POST['password'], $getPlayerInfo['password']); // Vérification du mot de passe
         if ($isPasswordCorrect) { // Si le mot de passe correspond, on passe les informations de l'utilisateur à la session, sinon on affiche un message d'erreur
-            $_SESSION['id'] = $getInfo['id'];
-            $_SESSION['playerName'] = $getInfo['playerName'];
-            $_SESSION['email'] = $getInfo['email'];
-            $_SESSION['function'] = $getInfo['function'];
-            header('Location: index.php');
+            $_SESSION['id'] = $getPlayerInfo['id'];
+            $_SESSION['playerName'] = $getPlayerInfo['playerName'];
+            $_SESSION['email'] = $getPlayerInfo['email'];
+            $_SESSION['status'] = $getPlayerInfo['status'];
+            echo "<div id='home_button'>
+                <button>
+                    <a href='index.php'>Retour</a>
+                </button>
+              </div>
+              <p>Coucou " . $playerName . " ! Tu es connecté !</p>";
+        //header('Location: http://localhost/Games&Friends/index.php');
         } else {
             echo 'Mauvais identifiant ou mot de passe !';
         }
@@ -34,22 +41,20 @@ function logOut()
 {
     session_unset();
     session_destroy();
-    header('Location: index.php'); // On renvoie à la page d'accueil après la déconnexion
+    header('Location: http://localhost/Games&Friends/index.php'); // On renvoie à la page d'accueil après la déconnexion
 }
 // Enregistrement
 function signIn()
 {
     global $db;
-
-    // On vérifie la bonne conformité de tous les champs du formulaire d'enregistrement
-
     $playerManager = new PlayerManager($db);
+    // On vérifie la bonne conformité de tous les champs du formulaire d'enregistrement    
     $playerName = !empty($_POST['playerName']) ? $_POST['playerName'] : null;
     $password = !empty($_POST['password']) ? $_POST['password'] : null;
     $confirmationPassword = !empty($_POST['confirmationPassword']) ? $_POST['confirmationPassword'] : null;
     $email = !empty($_POST['email']) ? $_POST['email'] : null;
-    $checkPlayer = $playerManager->getInfo($playerName); // Vérification de la préexistence de l'utilisateur
-    $checkEmail = $playerManager->getInfo($email); // Vérification de la préexistence de l'email
+    $checkPlayer = $playerManager->getPlayerInfo($playerName); // Vérification de la préexistence de l'utilisateur
+    $checkEmail = $playerManager->getPlayerInfo($email); // Vérification de la préexistence de l'email
 
     if ($playerName === null) {
         echo "Veuillez saisir un nom d'utilisateur valide.";
@@ -67,30 +72,74 @@ function signIn()
         $passHash = password_hash($password, PASSWORD_DEFAULT);
         $req = $playerManager->signIn($playerName, $passHash, $email); // Enregistrement du nouvel utilisateur
         echo "<div id='home_button'>
-                <button>
-                    <a href='index.php?action=listPosts'>Retour</a>
-                </button>
-              </div>
-                <p>Bienvenue ! Vous vous êtes enregistré sous le pseudonyme " . $playerName . " !</p>";
+        <button>
+            <a href='index.php'>Retour</a>
+        </button>
+      </div>
+      <p>Bienvenue ! Vous vous êtes enregistré sous le pseudonyme " . $playerName . " !</p>";
     }
 }
 // Affichage du profil
-function showPlayerProfil()
+function showPlayerProfil($playerName)
 {
+    global $db;
+    $playerManager = new PlayerManager($db);
+
+    $playerInfo = $playerManager->getPlayerInfo($playerName);
 }
 // Modification de mot de passe
-function updatePlayerPassword()
+function updatePlayerPassword($playerName, $password, $newPassword)
 {
+    global $db;
+    $playerManager = new PlayerManager($db);
+
+    $getPlayerInfo = $playerManager->getPlayerInfo($playerName); // On récupère les informations liées à $playerName
+    $password = !empty($_POST['password']) ? $_POST['password'] : null;
+    $newPassword = !empty($_POST['newPassword']) ? $_POST['newPassword'] : null;
+    $confirmationNewPassword = !empty($_POST['confirmationNewPassword']) ? $_POST['confirmationNewPassword'] : null;
+
+    if ($confirmationNewPassword !== $newPassword || $confirmationNewPassword === null) {
+        echo "Veuillez confirmer votre nouveau mot de passe.";
+    } elseif ($getPlayerInfo) {
+        $isPasswordCorrect = password_verify($_POST['password'], $getPlayerInfo['password']); // Vérification du mot de passe
+        if ($isPasswordCorrect) {
+        $newPassHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $playerManager->modifyPassword($playerName, $newPassHash);
+        } else {
+            echo 'Mauvais identifiant ou mot de passe !';
+        }
+    } else {
+        echo 'Mauvais identifiant ou mot de passe !';
+    }
+}
+// Modification d'email
+function updatePlayerEmail($playerName, $email, $newEmail)
+{
+    global $db;
+    $playerManager = new PlayerManager($db);
+
+    $getPlayerInfo = $playerManager->getPlayerInfo($playerName); // On récupère les informations liées à $playerName
+    $email = !empty($_POST['email']) ? $_POST['email'] : null;
+    $newEmail = !empty($_POST['newEmail']) ? $_POST['newEmail'] : null;
+
+    if ($newEmail === null || !preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['newEmail'])) {
+        echo "Veuillez saisir une adresse e-mail valide.";
+    } else {
+        $playerManager->modifyEmail($playerName, $newEmail);
+    }
 }
 // Modification de localisation
 function updatePlayerLocation()
 {
+    global $db;
+    $playerManager = new PlayerManager($db);
+
 }
-// Modification d'email
-function updatePlayerEmail()
-{
-}
+
 // Modification des jeux
 function updatePlayerGames()
 {
+    global $db;
+    $playerManager = new PlayerManager($db);
+
 }

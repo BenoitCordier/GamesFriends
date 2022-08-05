@@ -72,9 +72,9 @@
            // if (session_status() !== PHP_SESSION_ACTIVE || !isset($_SESSION['playerName'])) {
                 ?>
 		<!-- Formulaire de connexion -->
-		<div id="logIn" style="display: none;">
+		<div id="logIn">
 			<h2>Se connecter</h2>
-			<form method="POST" action="index.php?action=logIn">
+			<form method="POST" action="http://localhost/Games&Friends/index.php?action=logIn">
 				<div class="flexLogIn">
 					<label for="userLogin">Login</label>
 					<input id="userLogin" class="logField" type="text" name="playerName" />
@@ -87,16 +87,16 @@
 			</form>
 		</div>
 		<!-- Formulaire d'enregistrement -->
-		<div id="signIn" style="display: none;">
+		<div id="signIn">
 			<h2>S'enregistrer</h2>
-			<form method="POST" action="index.php?action=signIn">
+			<form method="POST" action="http://localhost/Games&Friends/index.php?action=signIn">
 				<div class="flexLogIn">
 					<label for="playerName">Login</label>
 					<input id="playerName" type="text" name="playerName" />
 				</div>
 				<div class="flexLogIn">
-					<label for="eMail">E-mail</label>
-					<input id="eMail" type="text" name="eMail" />
+					<label for="email">E-mail</label>
+					<input id="email" type="text" name="email" />
 				</div>
 				<div class="flexLogIn">
 					<label for="password">Mot de passe</label>

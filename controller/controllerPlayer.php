@@ -74,3 +74,23 @@ function signIn()
                 <p>Bienvenue ! Vous vous êtes enregistré sous le pseudonyme " . $playerName . " !</p>";
     }
 }
+// Affichage du profil
+function showPlayerProfil()
+{
+}
+// Modification de mot de passe
+function updatePlayerPassword()
+{
+}
+// Modification de localisation
+function updatePlayerLocation()
+{
+}
+// Modification d'email
+function updatePlayerEmail()
+{
+}
+// Modification des jeux
+function updatePlayerGames()
+{
+}

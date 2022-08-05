@@ -28,7 +28,7 @@ function logIn()
                 </button>
               </div>
               <p>Coucou " . $playerName . " ! Tu es connecté !</p>";
-        //header('Location: http://localhost/Games&Friends/index.php');
+        //header('Location: index.php');
         } else {
             echo 'Mauvais identifiant ou mot de passe !';
         }
@@ -41,7 +41,7 @@ function logOut()
 {
     session_unset();
     session_destroy();
-    header('Location: http://localhost/Games&Friends/index.php'); // On renvoie à la page d'accueil après la déconnexion
+    header('Location: index.php'); // On renvoie à la page d'accueil après la déconnexion
 }
 // Enregistrement
 function signIn()
@@ -135,7 +135,6 @@ function updatePlayerLocation()
     $playerManager = new PlayerManager($db);
 
 }
-
 // Modification des jeux
 function updatePlayerGames()
 {

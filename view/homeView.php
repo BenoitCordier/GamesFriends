@@ -39,7 +39,7 @@
 		<div id="control">
 			<ul>
 				<?php
-                //if (session_status() !== PHP_SESSION_ACTIVE || !isset($_SESSION['playerName'])) { // Si aucune session n'est active on affiche les boutons de connexion et d'enregistrement
+                if (session_status() !== PHP_SESSION_ACTIVE || !isset($_SESSION['playerName'])) { // Si aucune session n'est active on affiche les boutons de connexion et d'enregistrement
                     ?>
 				<li id="connexion" class="logBtn1">
 					Se connecter
@@ -48,28 +48,28 @@
 					S'enregistrer
 				</li>
 				<?php
-                //}
-            //if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['playerName'])) { // Si une session est active on n'affiche que le bouton de déconnexion
+                }
+            if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['playerName'])) { // Si une session est active on n'affiche que le bouton de déconnexion
                 ?>
 				<li class="logBtn1">
 					<a href="index.php?action=logOut">Déconnexion</a>
 				</li>
 				<?php
-            //if ($_SESSION['function'] == 'admin' && (basename($_SERVER['PHP_SELF']) != 'admin.php')) { // Si la session active est administrateur on affiche le bouton d'administration
+            if ($_SESSION['function'] == 'admin' && (basename($_SERVER['PHP_SELF']) != 'admin.php')) { // Si la session active est administrateur on affiche le bouton d'administration
                 ?>
 				<li class="logBtn1">
 					<a href="index.php?action=admin">Administration</a>
 				</li>
 				<?php
-            //}
-            //}
-            //if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['playerName']) && (basename($_SERVER['PHP_SELF']) === 'index.php')) {
+                }
+            }
+            if (session_status() == PHP_SESSION_ACTIVE && isset($_SESSION['playerName']) && (basename($_SERVER['PHP_SELF']) === 'index.php')) {
                 ?>
 			</ul>
 		</div>
 		<?php
-            //}
-           // if (session_status() !== PHP_SESSION_ACTIVE || !isset($_SESSION['playerName'])) {
+            }
+            if (session_status() !== PHP_SESSION_ACTIVE || !isset($_SESSION['playerName'])) {
                 ?>
 		<!-- Formulaire de connexion -->
 		<div id="logIn">
@@ -110,7 +110,7 @@
 			</form>
 		</div>
 		<?php
-            //}
+            }
                 ?>
 	</header>
 	<footer>
